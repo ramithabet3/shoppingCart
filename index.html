@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        /* Add your CSS styles here */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .like-button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Shopping Cart</h1>
+    <div id="cart">
+        <!-- Cart items will be added here dynamically using JavaScript -->
+    </div>
+    <div id="total">Total: $0</div>
+
+    <script>
+        // Sample product data
+        const products = [
+            { id: 1, name: 'Product 1', price: 10 },
+            { id: 2, name: 'Product 2', price: 20 },
+            { id: 3, name: 'Product 3', price: 30 }
+        ];
+
+        const cart = [];
+
+        // Function to render the cart
+        function renderCart() {
+            const cartElement = document.getElementById('cart');
+            const totalElement = document.getElementById('total');
+            cartElement.innerHTML = '';
+            let totalPrice = 0;
+
+            cart.forEach(item => {
+                const product = products.find(p => p.id === item.id);
+                if (product) {
+                    const cartItem = document.createElement('div');
+                    cartItem.classList.add('cart-item');
+
+                    const name = document.createElement('span');
+                    name.textContent = product.name;
+                    cartItem.appendChild(name);
+
+                    const quantity = document.createElement('input');
+                    quantity.type = 'number';
+                    quantity.value = item.quantity;
+                    quantity.min = 1;
+                    quantity.addEventListener('input', () => {
+                        item.quantity = parseInt(quantity.value);
+                        renderCart();
+                    });
+                    cartItem.appendChild(quantity);
+
+                    const likeButton = document.createElement('span');
+                    likeButton.textContent = '❤️';
+                    likeButton.classList.add('like-button');
+                    likeButton.style.color = item.liked ? 'red' : 'black';
+                    likeButton.addEventListener('click', () => {
+                        item.liked = !item.liked;
+                        renderCart();
+                    });
+                    cartItem.appendChild(likeButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.addEventListener('click', () => {
+                        cart.splice(cart.indexOf(item), 1);
+                        renderCart();
+                    });
+                    cartItem.appendChild(deleteButton);
+
+                    const itemPrice = product.price * item.quantity;
+                    totalPrice += itemPrice;
+                    cartElement.appendChild(cartItem);
+                }
+            });
+
+            totalElement.textContent = `Total: $${totalPrice}`;
+        }
+
+        // Add initial items to the cart
+        cart.push({ id: 1, quantity: 2, liked: false });
+        cart.push({ id: 2, quantity: 1, liked: true });
+
+        // Render the cart
+        renderCart();
+    </script>
+</body>
+</html>
